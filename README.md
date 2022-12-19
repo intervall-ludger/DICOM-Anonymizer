@@ -21,7 +21,7 @@ cd DICOM-Anonymizer
 
 ## Usage
 
-**Use DICOM-Anonymizer with CLI**
+### **Use DICOM-Anonymizer with CLI**
 
 To use the Dicom-Anonymizer function, you can call it from the command line as follows:
 
@@ -41,7 +41,7 @@ python main.py encrypt /path/to/input/folder /path/to/output/folder
 python main.py decrypt /path/to/input/folder /path/to/output/folder
 ````
 
-**Use DICOM-Anonymizer with Python Code**
+### **Use DICOM-Anonymizer with Python Code**
 
 ````python
 from utilities.ModeConfigurations import HardAnonymize
