@@ -1,11 +1,13 @@
 import os
+from copy import deepcopy
 
 import pydicom
-from .helper_function import mk_dir, np, load_dcm_files, Fernet, encrypt, decrypt
-from scipy.ndimage.filters import gaussian_filter
 from pydicom.data import get_testdata_file
-from copy import deepcopy
+from scipy.ndimage.filters import gaussian_filter
+
+from .helper_function import Fernet, decrypt, encrypt, load_dcm_files, mk_dir, np
 from .ModeConfigurations import AbstractModeConfiguration
+
 
 class DicomChanger:
     def __init__(

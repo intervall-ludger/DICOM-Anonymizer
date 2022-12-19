@@ -107,6 +107,17 @@ Everyone is welcome to create an issue or pull request for this project. If you 
 
 Please make sure to use the GitHooks provided with the project to ensure that your code adheres to the style guidelines and passes all tests before submitting a pull request. This will make it easier for the maintainers to review and merge your contribution.
 
+**Git hocks**
+Install "pre-commit"
+```bash
+pip install pre-commit
+```
+
+then run:
+```bash
+pre-commit install
+```
+
 ## License
 [GNU General Public License 3](https://www.gnu.org/licenses/gpl-3.0.html)
 
