@@ -23,25 +23,49 @@ class AbstractModeConfiguration(ABC):
     def change_false_keys(self):
         pass
 
+
 # Class for hard anonymization mode configuration
 class HardAnonymize(AbstractModeConfiguration, ABC):
 
     # Return list of keys that should be changed to True
     def change_true_keys(self):
-        return ['ImageType', 'Pixel', 'SliceThickness', 'SliceLocation', 'Rows', 'Columns', 'BitsAllocated',
-                'BitsStored', 'WindowCenter', 'WindowWidth', 'HighBit']
+        return [
+            "ImageType",
+            "Pixel",
+            "SliceThickness",
+            "SliceLocation",
+            "Rows",
+            "Columns",
+            "BitsAllocated",
+            "BitsStored",
+            "WindowCenter",
+            "WindowWidth",
+            "HighBit",
+        ]
 
     # Return empty list of keys that should be changed to False
     def change_false_keys(self):
         return []
+
 
 # Class for only critical anonymization mode configuration
 class OnlyCriticalAnonymize(AbstractModeConfiguration, ABC):
 
     # Return list of keys that should be changed to True
     def change_true_keys(self):
-        return ['ImageType', 'Pixel', 'SliceThickness', 'SliceLocation', 'Rows', 'Columns', 'BitsAllocated',
-                'BitsStored', 'WindowCenter', 'WindowWidth', 'HighBit']
+        return [
+            "ImageType",
+            "Pixel",
+            "SliceThickness",
+            "SliceLocation",
+            "Rows",
+            "Columns",
+            "BitsAllocated",
+            "BitsStored",
+            "WindowCenter",
+            "WindowWidth",
+            "HighBit",
+        ]
 
     # Return empty list of keys that should be changed to False
     def change_false_keys(self):
