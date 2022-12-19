@@ -1,0 +1,12 @@
+cffi==1.15.1
+cryptography==38.0.1
+nibabel==4.0.2
+numpy==1.23.3
+packaging==21.3
+pip==21.3.1
+pycparser==2.21
+pydicom==2.3.0
+pyparsing==3.0.9
+scipy==1.9.1
+setuptools==60.2.0
+wheel==0.37.1
