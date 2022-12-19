@@ -3,6 +3,7 @@ import nibabel as nib
 import numpy as np
 import os
 import hashlib
+from typing import List, Optional, Dict, Union
 
 from cryptography.fernet import Fernet
 
