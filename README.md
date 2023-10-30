@@ -23,7 +23,7 @@ The DICOM Anonymizer is a powerful tool built using PyQt6 that allows users to p
 ## Installation
 
 ### Prerequisites
-- Python 3.8 or higher (for running from source).
+- Python 3.10 or higher (for running from source).
 - PyQt6 library (for running from source).
 - pydicom library (for running from source).
 
@@ -44,7 +44,7 @@ The DICOM Anonymizer is a powerful tool built using PyQt6 that allows users to p
    ```
 
 #### Using Standalone Executable:
-1. Download the `DICOMAnonymizer.exe` from the releases section.
+1. Download the `DICOMAnonymizer.exe` [here](/dist/DicomAnonymizer.exe').
 2. Run the executable.
 
 ## Usage
