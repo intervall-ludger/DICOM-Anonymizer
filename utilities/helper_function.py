@@ -6,6 +6,8 @@ import hashlib
 from typing import List, Optional, Dict, Union
 
 from cryptography.fernet import Fernet
+from utilities.encryption_manager import detect_if_encrypted
+
 
 # Load DICOM files from a given folder
 def load_dcm_files(folder: str) -> List[str]:
@@ -47,17 +49,26 @@ def check_config(config: Optional[Dict[str, List[str]]]) -> Dict[str, List[str]]
     return config
 
 
-# Load a NIFTI file and return its data as a NumPy array
-def load_nifti(nii_file: str) -> np.ndarray:
-    # Load the NIFTI file using Nibabel
-    nimg = nib.load(nii_file)
-    # Return the data from the NIFTI file, transposed and flipped
-    return nimg.get_fdata()[:, :, ::-1].transpose(1, 0, 2)
+def get_tags(folder):
+    tags_set = set()
 
+    # Lesen Sie einen repräsentativen DICOM-Datei, um die Tag-Werte zu erhalten
+    flags = []
+    for representative_file in load_dcm_files(folder):
+        ds = pydicom.dcmread(str(representative_file))
 
-# Create a directory if it doesn't exist
-def mk_dir(folder: str):
-    os.makedirs(folder, exist_ok=True)
+        if detect_if_encrypted(ds):
+            raise ValueError
+        for elem in ds:
+            tag_flag = str(elem.tag)
+            if tag_flag in flags:
+                continue
+            flags.append(tag_flag)
+            tag_name = elem.keyword
+            if tag_name:
+                value = str(elem.value)[:20]
+                tags_set.add((tag_flag, tag_name, value))
+    return tags_set
 
 
 # Encrypt a string using a Fernet object
