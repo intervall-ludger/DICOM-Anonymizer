@@ -2,16 +2,17 @@ import configparser
 from PyQt6.QtWidgets import QTableWidget
 
 
-def save_config(tagsTable: QTableWidget, file_path: str = "config.ini"):
+def save_config(tagsTable: QTableWidget, file_path: str = "config.ini") -> None:
     """
-    Save the current configuration to a file.
+    Save the current configuration of DICOM tags to a file.
 
-    Args:
-        tagsTable (QTableWidget): The table containing tag configurations.
+    Parameters:
+        tagsTable (QTableWidget): Table containing the tag configurations.
         file_path (str, optional): Path to save the config file. Defaults to "config.ini".
     """
     config = configparser.ConfigParser()
 
+    # Iterate over each row in the table to extract tag configurations
     for row in range(tagsTable.rowCount()):
         tag = tagsTable.item(row, 1).text()  # Getting the tag name
         for col in range(3, 8):
@@ -21,21 +22,23 @@ def save_config(tagsTable: QTableWidget, file_path: str = "config.ini"):
                 break
         config[tag] = {"Action": action}
 
+    # Save the configurations to the specified file
     with open(file_path, "w") as configfile:
         config.write(configfile)
 
 
-def load_config(tagsTable: QTableWidget, file_path: str = "config.ini"):
+def load_config(tagsTable: QTableWidget, file_path: str = "config.ini") -> None:
     """
-    Load configurations from a file and apply to the table.
+    Load configurations of DICOM tags from a file and apply them to the table.
 
-    Args:
-        tagsTable (QTableWidget): The table to update with configurations.
+    Parameters:
+        tagsTable (QTableWidget): Table to update with loaded configurations.
         file_path (str, optional): Path to load the config file from. Defaults to "config.ini".
     """
     config = configparser.ConfigParser()
     config.read(file_path)
 
+    # Apply the loaded configurations to the table
     for row in range(tagsTable.rowCount()):
         tag = tagsTable.item(row, 1).text()
         if tag in config:
@@ -44,15 +47,18 @@ def load_config(tagsTable: QTableWidget, file_path: str = "config.ini"):
             radio_button.setChecked(True)
 
 
-def auto_select(tagsTable: QTableWidget):
+def auto_select(tagsTable: QTableWidget) -> None:
     """
-    Automatically select configurations for known sensitive tags.
+    Automatically select configurations for known sensitive DICOM tags.
 
-    Args:
-        tagsTable (QTableWidget): The table to update with configurations.
+    Parameters:
+        tagsTable (QTableWidget): Table to update with auto-selected configurations.
     """
 
+    # Auto-select configurations for tags with sensitive information
     for row in range(tagsTable.rowCount()):
         tag_name = tagsTable.item(row, 1).text()
         if "Patient" in tag_name or "Date" in tag_name or "ID" in tag_name:
             tagsTable.cellWidget(row, 5).setChecked(True)
+        else:
+            tagsTable.cellWidget(row, 3).setChecked(True)
