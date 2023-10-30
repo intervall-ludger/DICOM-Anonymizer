@@ -64,11 +64,6 @@ Contributions are welcome! Please make sure to create a new branch for each feat
 
 This project is licensed under the MIT License.
 
-## Acknowledgements
-
-- Thanks to the pydicom community for providing a robust library to work with DICOM files.
-- The PyQt6 community for the comprehensive GUI library.
-
 ## Feedback
 
 Feedback is greatly appreciated. If you find any bugs or have suggestions, please open an issue in the repository.
