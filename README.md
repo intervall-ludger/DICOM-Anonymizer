@@ -72,7 +72,3 @@ This project is licensed under the MIT License.
 ## Feedback
 
 Feedback is greatly appreciated. If you find any bugs or have suggestions, please open an issue in the repository.
-
----
-
-Note: You will need to provide the actual repository URL in the installation steps and the actual location/link to the standalone `.exe` in the releases section for users to download.
