@@ -92,7 +92,9 @@ def get_tags(folder: str) -> Set[Tuple[str, str, str]]:
     return tags_set
 
 
-def encrypt(string: Union[str, pydicom.multival.MultiValue], fernet: Fernet) -> Union[bytes, List[bytes]]:
+def encrypt(
+    string: Union[str, pydicom.multival.MultiValue], fernet: Fernet
+) -> Union[bytes, List[bytes]]:
     """
     Encrypt a string using a Fernet object.
 
