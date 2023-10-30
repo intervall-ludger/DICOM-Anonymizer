@@ -57,8 +57,13 @@ def auto_select(tagsTable: QTableWidget) -> None:
 
     # Auto-select configurations for tags with sensitive information
     for row in range(tagsTable.rowCount()):
-        tag_name = tagsTable.item(row, 1).text()
-        if "Patient" in tag_name or "Date" in tag_name or "ID" in tag_name:
+        tag_name = tagsTable.item(row, 1).text().lower()
+        if (
+            "patient" in tag_name
+            or "date" in tag_name
+            or "id" in tag_name
+            or "name" in tag_name
+        ):
             tagsTable.cellWidget(row, 5).setChecked(True)
         else:
             tagsTable.cellWidget(row, 3).setChecked(True)
