@@ -1,16 +1,21 @@
 import pydicom
-import nibabel as nib
-import numpy as np
 import os
-import hashlib
-from typing import List, Optional, Dict, Union
+from typing import List, Optional, Dict, Union, Tuple, Set
 
 from cryptography.fernet import Fernet
 from utilities.encryption_manager import detect_if_encrypted
 
 
-# Load DICOM files from a given folder
 def load_dcm_files(folder: str) -> List[str]:
+    """
+    Load DICOM files from a given folder.
+
+    Parameters:
+        folder (str): Path to the folder containing DICOM files.
+
+    Returns:
+        List[str]: List of paths to DICOM files.
+    """
     dcm_files = []
     # Iterate through all files in the folder and its subfolders
     for root, _, files in os.walk(folder):
@@ -21,7 +26,6 @@ def load_dcm_files(folder: str) -> List[str]:
     return dcm_files
 
 
-# Check if a file is a DICOM file
 def is_file_a_dicom(file: str) -> bool:
     """
     Check if a file is a DICOM file.
@@ -39,8 +43,16 @@ def is_file_a_dicom(file: str) -> bool:
     return True
 
 
-# Check and return the given config dictionary
 def check_config(config: Optional[Dict[str, List[str]]]) -> Dict[str, List[str]]:
+    """
+    Check and return the given config dictionary.
+
+    Parameters:
+        config (Optional[Dict[str, List[str]]]): Configuration dictionary.
+
+    Returns:
+        Dict[str, List[str]]: Configuration dictionary.
+    """
     if config is None:
         # Set default config if none is provided
         config = {
@@ -49,10 +61,19 @@ def check_config(config: Optional[Dict[str, List[str]]]) -> Dict[str, List[str]]
     return config
 
 
-def get_tags(folder):
+def get_tags(folder: str) -> Set[Tuple[str, str, str]]:
+    """
+    Get unique tags from DICOM files in a given folder.
+
+    Parameters:
+        folder (str): Path to the folder containing DICOM files.
+
+    Returns:
+        Set[Tuple[str, str, str]]: Set of unique tags in the form (tag_flag, tag_name, value).
+    """
     tags_set = set()
 
-    # Lesen Sie einen repräsentativen DICOM-Datei, um die Tag-Werte zu erhalten
+    # Read a representative DICOM file to get the tag values
     flags = []
     for representative_file in load_dcm_files(folder):
         ds = pydicom.dcmread(str(representative_file))
@@ -71,11 +92,18 @@ def get_tags(folder):
     return tags_set
 
 
-# Encrypt a string using a Fernet object
-def encrypt(
-    string: Union[str, pydicom.multival.MultiValue], fernet: Fernet
-) -> Union[bytes, List[bytes]]:
-    if type(string) == pydicom.multival.MultiValue:
+def encrypt(string: Union[str, pydicom.multival.MultiValue], fernet: Fernet) -> Union[bytes, List[bytes]]:
+    """
+    Encrypt a string using a Fernet object.
+
+    Parameters:
+        string (Union[str, pydicom.multival.MultiValue]): String or MultiValue object to encrypt.
+        fernet (Fernet): Fernet object for encryption.
+
+    Returns:
+        Union[bytes, List[bytes]]: Encrypted data.
+    """
+    if isinstance(string, pydicom.multival.MultiValue):
         # If the string is a pydicom MultiValue object, encrypt each value in the object
         return [
             fernet.encrypt((str(type(string)) + "%" + str(string)).encode())
@@ -85,12 +113,16 @@ def encrypt(
     return fernet.encrypt((str(type(string)) + "%" + str(string)).encode())
 
 
-# Decrypt a string using a Fernet object
 def decrypt(string: bytes, fernet: Fernet) -> str:
+    """
+    Decrypt a string using a Fernet object.
+
+    Parameters:
+        string (bytes): Encrypted data.
+        fernet (Fernet): Fernet object for decryption.
+
+    Returns:
+        str: Decrypted string.
+    """
     # Decrypt the string and return the decoded result
     return fernet.decrypt(string).decode()
-
-
-if __name__ == "__main__":
-    s = "1"
-    b = 2
