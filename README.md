@@ -1,5 +1,7 @@
 # DICOM Anonymizer
 
+![](GUI.png)
+
 ## Overview
 
 The DICOM Anonymizer is a powerful tool built using PyQt6 that allows users to process and anonymize DICOM files. It provides various functionalities, such as changing tag values, using dummy values, deleting tags, and even encrypting tag values. The application also has a built-in search functionality to easily filter and locate specific tags within the DICOM files. Additionally, for ease of use, a standalone executable version is available for users who do not wish to run the application from source.
