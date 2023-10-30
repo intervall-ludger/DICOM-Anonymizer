@@ -1,4 +1,6 @@
+import json
 from pathlib import Path
+
 import pydicom
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWidgets import (
@@ -22,62 +24,62 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QInputDialog,
 )
+
 from utilities.config_manager import load_config, save_config, auto_select
 from utilities.encryption_manager import encrypt, decrypt, detect_if_encrypted
 from utilities.helper_function import load_dcm_files, get_tags
-import re
-import json
 
 
 class DICOMAnonymizer(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
+    def init_ui(self):
         self.setWindowTitle("DICOM Anonymizer")
         self.setGeometry(100, 100, 1200, 600)
-        self.setupMenu()
-        self.setupLayout()
+        self.setup_menu()
+        self.setup_layout()
 
-    def setupMenu(self):
+    def setup_menu(self):
         menubar = QMenuBar(self)
         self.setMenuBar(menubar)
         file_menu = QMenu("File", self)
         menubar.addMenu(file_menu)
 
         save_action = QAction(QIcon(), "Save Config", self)
-        save_action.triggered.connect(self.saveConfig)
+        save_action.triggered.connect(self.save_config)
         file_menu.addAction(save_action)
 
         load_action = QAction(QIcon(), "Load Config", self)
-        load_action.triggered.connect(self.loadConfig)
+        load_action.triggered.connect(self.load_config)
         file_menu.addAction(load_action)
 
-    def setupLayout(self):
+    def setup_layout(self):
+        """Setup the main layout and add widgets."""
         main_layout = QVBoxLayout()
 
         # Folder Selector
         self.folderBtn = QPushButton("Select Folder", self)
-        self.folderBtn.clicked.connect(self.selectFolder)
+        self.folderBtn.clicked.connect(self.select_folder)
         main_layout.addWidget(self.folderBtn)
 
         # Search Fields
-        self.setupSearchFields(main_layout)
+        self.setup_search_fields(main_layout)
 
         # Tags Table
-        self.setupTable(main_layout)
+        self.setup_table(main_layout)
 
         # Radio buttons for Anonymize or Encrypt and Password input
-        self.setupRadioButtons(main_layout)
+        self.setup_radio_buttons(main_layout)
 
         # Auto Select and Process Button
         self.autoSelectBtn = QPushButton("Auto Select", self)
-        self.autoSelectBtn.clicked.connect(self.autoSelect)
+        self.autoSelectBtn.clicked.connect(self.auto_select)
         main_layout.addWidget(self.autoSelectBtn)
 
         self.processBtn = QPushButton("Process", self)
-        self.processBtn.clicked.connect(self.processFiles)
+        self.processBtn.clicked.connect(self.process_files)
         main_layout.addWidget(self.processBtn)
 
         # Progress bar
@@ -90,7 +92,7 @@ class DICOMAnonymizer(QMainWindow):
         centralWidget.setLayout(main_layout)
         self.setCentralWidget(centralWidget)
 
-    def setupTable(self, main_layout):
+    def setup_table(self, main_layout):
         self.tagsTable = QTableWidget(0, 8)
         self.tagsTable.setHorizontalHeaderLabels(
             [
@@ -109,7 +111,8 @@ class DICOMAnonymizer(QMainWindow):
         )
         main_layout.addWidget(self.tagsTable)
 
-    def setupSearchFields(self, main_layout):
+    def setup_search_fields(self, main_layout):
+        """Setup search fields for Tag (Flag), Tag Name, and Value."""
         search_layout = QHBoxLayout()
 
         # Search fields for Tag (Flag), Tag Name, and Value
@@ -121,9 +124,9 @@ class DICOMAnonymizer(QMainWindow):
         self.searchValue.setPlaceholderText("Search Value")
 
         # Connect textChanged signal to filterTable method
-        self.searchTag.textChanged.connect(self.filterTable)
-        self.searchTagName.textChanged.connect(self.filterTable)
-        self.searchValue.textChanged.connect(self.filterTable)
+        self.searchTag.textChanged.connect(self.filter_table)
+        self.searchTagName.textChanged.connect(self.filter_table)
+        self.searchValue.textChanged.connect(self.filter_table)
 
         search_layout.addWidget(self.searchTag)
         search_layout.addWidget(self.searchTagName)
@@ -131,7 +134,8 @@ class DICOMAnonymizer(QMainWindow):
 
         main_layout.addLayout(search_layout)
 
-    def filterTable(self):
+    def filter_table(self):
+        """Filter table rows based on search criteria."""
         # Get search criteria
         search_tag = self.searchTag.text().lower()
         search_tag_name = self.searchTagName.text().lower()
@@ -153,7 +157,7 @@ class DICOMAnonymizer(QMainWindow):
 
             self.tagsTable.setRowHidden(row, not match)
 
-    def setupRadioButtons(self, main_layout):
+    def setup_radio_buttons(self, main_layout):
         radio_layout = QHBoxLayout()
 
         self.passwordLabel = QLabel("Encryption Password:")
@@ -164,13 +168,13 @@ class DICOMAnonymizer(QMainWindow):
 
         main_layout.addLayout(radio_layout)
 
-    def selectFolder(self):
+    def select_folder(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Folder")
         if folder:
             self.folder = folder
-            self.getDICOMTags()
+            self.get_dicom_tags()
 
-    def getDICOMTags(self):
+    def get_dicom_tags(self):
         self.tagsTable.setRowCount(0)
         try:
             tags_set = get_tags(self.folder)
@@ -180,7 +184,7 @@ class DICOMAnonymizer(QMainWindow):
                 self, "Encrypted Data Detected", "Enter password for decryption:"
             )
             if ok:
-                self.decryptFiles(password)
+                self.decrypt_files(password)
             return
         for tag_flag, tag_name, value in sorted(tags_set, key=lambda x: x[1]):
             row_position = self.tagsTable.rowCount()
@@ -191,9 +195,9 @@ class DICOMAnonymizer(QMainWindow):
             value_input = QLineEdit(value)
             self.tagsTable.setCellWidget(row_position, 2, value_input)
 
-            self.addActionsToRow(row_position)
+            self.add_actions_to_row(row_position)
 
-    def addActionsToRow(self, row):
+    def add_actions_to_row(self, row):
         radio_group = QButtonGroup(self)
         unchanged_radio = QRadioButton("")
         change_dummy_radio = QRadioButton("")
@@ -214,16 +218,16 @@ class DICOMAnonymizer(QMainWindow):
         self.tagsTable.setCellWidget(row, 7, encryptRadio)
         unchanged_radio.setChecked(True)
 
-    def saveConfig(self):
+    def save_config(self):
         save_config(self.tagsTable, "config.ini")
 
-    def loadConfig(self):
+    def load_config(self):
         load_config(self.tagsTable, "config.ini")
 
-    def autoSelect(self):
+    def auto_select(self):
         auto_select(self.tagsTable)
 
-    def processFiles(self):
+    def process_files(self):
         if self.is_encrypt_selected() and not self.passwordInput.text():
             QMessageBox.critical(
                 self, "Error", "Please provide an encryption password!"
@@ -236,17 +240,17 @@ class DICOMAnonymizer(QMainWindow):
         self.progressBar.show()
 
         for idx, dcm_file in enumerate(load_dcm_files(self.folder)):
-            self.processSingleFile(dcm_file, dummy_ds)
+            self.process_single_file(dcm_file, dummy_ds)
             self.progressBar.setValue(idx + 1)
 
-    def processSingleFile(self, dcm_file, dummy_ds):
+    def process_single_file(self, dcm_file, dummy_ds):
         output_filepath = dcm_file.replace(self.folder, self.folder + "_new")
         ds = pydicom.dcmread(dcm_file)
         encryption_flags = {}
         for row in range(self.tagsTable.rowCount()):
             tag_name = self.tagsTable.item(row, 1).text()
             if tag_name in ds:
-                flag = self.processTag(ds, tag_name, row, dummy_ds)
+                flag = self.process_tag(ds, tag_name, row, dummy_ds)
                 if flag:
                     encryption_flags[str(flag["tag"])] = flag
         if len(encryption_flags.keys()) > 0:
@@ -257,8 +261,8 @@ class DICOMAnonymizer(QMainWindow):
         Path(output_filepath).parent.mkdir(parents=True, exist_ok=True)
         ds.save_as(output_filepath)
 
-    def processTag(self, ds, tag_name, row, dummy_ds):
-        action = self.getActionForRow(row)
+    def process_tag(self, ds, tag_name, row, dummy_ds):
+        action = self.get_action_for_row(row)
         tag = pydicom.datadict.tag_for_keyword(tag_name)
         if action == "Change with Dummy Value":
             ds[tag].value = dummy_ds.get(tag_name, "")
@@ -277,7 +281,7 @@ class DICOMAnonymizer(QMainWindow):
             del ds[tag]
             return data
 
-    def getActionForRow(self, row):
+    def get_action_for_row(self, row):
         if self.tagsTable.cellWidget(row, 3).isChecked():
             return "Unchanged"
         elif self.tagsTable.cellWidget(row, 5).isChecked():
@@ -302,7 +306,7 @@ class DICOMAnonymizer(QMainWindow):
                 return row
         return None
 
-    def decryptFiles(self, password):
+    def decrypt_files(self, password):
         for dcm_file in load_dcm_files(self.folder):
             output_filepath = dcm_file.replace(self.folder, self.folder + "_new")
             ds = pydicom.dcmread(dcm_file)
