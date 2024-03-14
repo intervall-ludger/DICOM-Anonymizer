@@ -28,7 +28,7 @@ from PyQt6.QtWidgets import (
 from utilities.config_manager import load_config, save_config, auto_select
 from utilities.encryption_manager import encrypt, decrypt, detect_if_encrypted
 from utilities.helper_function import load_dcm_files, get_tags
-
+from utilities.json_wrapper import try_serialize
 
 class DICOMAnonymizer(QMainWindow):
     def __init__(self):
@@ -244,7 +244,7 @@ class DICOMAnonymizer(QMainWindow):
             self.progressBar.setValue(idx + 1)
 
     def process_single_file(self, dcm_file, dummy_ds):
-        output_filepath = dcm_file.replace(self.folder, self.folder + "_new")
+        output_filepath = dcm_file.replace(self.folder, self.folder + "_anonymized")
         ds = pydicom.dcmread(dcm_file)
         encryption_flags = {}
         for row in range(self.tagsTable.rowCount()):
@@ -254,8 +254,12 @@ class DICOMAnonymizer(QMainWindow):
                 if flag:
                     encryption_flags[str(flag["tag"])] = flag
         if len(encryption_flags.keys()) > 0:
+            try:
+                serialized_json = json.dumps(encryption_flags)
+            except TypeError:
+                serialized_json = json.dumps(try_serialize(encryption_flags))
             encrypted_data = encrypt(
-                json.dumps(encryption_flags), self.passwordInput.text()
+                serialized_json, self.passwordInput.text()
             )
             ds.add_new((0x0019, 0x0101), "OB", encrypted_data.encode())
         Path(output_filepath).parent.mkdir(parents=True, exist_ok=True)
@@ -308,7 +312,7 @@ class DICOMAnonymizer(QMainWindow):
 
     def decrypt_files(self, password):
         for dcm_file in load_dcm_files(self.folder):
-            output_filepath = dcm_file.replace(self.folder, self.folder + "_new")
+            output_filepath = dcm_file.replace(self.folder, self.folder + "_decrypted")
             ds = pydicom.dcmread(dcm_file)
             if detect_if_encrypted(ds):
                 data = ds[(0x0019, 0x0101)].value.decode()
