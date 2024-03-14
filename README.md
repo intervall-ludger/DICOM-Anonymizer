@@ -58,6 +58,15 @@ The DICOM Anonymizer is a powerful tool built using PyQt6 that allows users to p
 5. Use the "Process" button to apply your modifications to the DICOM files.
 6. If any tags are encrypted, provide an encryption password.
 
+
+## Create Release
+
+```shell
+git tag -a v0.0.1-beta -m "Release v0.0.1-beta"
+```
+```shell
+git push origin v0.0.1-beta
+```
 ## Contributing
 
 Contributions are welcome! Please make sure to create a new branch for each feature or bugfix and submit a pull request.
