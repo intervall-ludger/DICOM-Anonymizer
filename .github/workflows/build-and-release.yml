@@ -116,6 +116,12 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
 
+      - name: List downloaded files
+        run: |
+          echo "Listing files in the current directory:"
+          pwd
+          ls -Rlah
+
       - name: Get the version tag for release
         id: get_tag
         run: echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
