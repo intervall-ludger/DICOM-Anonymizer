@@ -72,13 +72,13 @@ jobs:
         shell: bash
 
       - name: Rename file
-        run: mv ./dist/DicomAnonymizer.exe ./dist/DicomAnonymizer-macos-${{  steps.get_tag.outputs.TAG }}.exe
+        run: mv ./dist/DicomAnonymizer.exe ./dist/DicomAnonymizer-windows-${{  steps.get_tag.outputs.TAG }}.exe
 
       - name: Upload Executable to Artifact
         uses: actions/upload-artifact@v3
         with:
           name: DicomAnonymizer-windows-${{  steps.get_tag.outputs.TAG }}
-          path: ./dist/DicomAnonymizer-macos-${{  steps.get_tag.outputs.TAG }}.exe
+          path: ./dist/DicomAnonymizer-windows-${{  steps.get_tag.outputs.TAG }}.exe
 
   build-macos:
     name: Build for macOS
