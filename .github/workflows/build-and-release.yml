@@ -27,7 +27,7 @@ jobs:
            python -m pip install -r ./requirements.txt
 
       - name: Build with PyInstaller
-        run: pyinstaller --onefile DicomAnonymizer.py
+        run: pyinstaller --onefile --windowed --collect-submodules=pydicom  --noconsole --noconfirm DicomAnonymizer.py
 
       - name: Extract version
         id: get_version
@@ -64,7 +64,7 @@ jobs:
            python -m pip install -r .\requirements.txt
 
       - name: Build with PyInstaller
-        run: pyinstaller --onefile DicomAnonymizer.py
+        run: pyinstaller --onefile --windowed --collect-submodules=pydicom  --noconsole --noconfirm DicomAnonymizer.py
 
       - name: Extract version
         id: get_version
@@ -101,7 +101,7 @@ jobs:
            python -m pip install -r ./requirements.txt
 
       - name: Build with PyInstaller
-        run: pyinstaller --onefile DicomAnonymizer.py
+        run: pyinstaller --onefile --windowed --collect-submodules=pydicom  --noconsole --noconfirm DicomAnonymizer.py
 
       - name: Extract version
         id: get_version
