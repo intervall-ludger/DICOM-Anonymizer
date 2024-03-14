@@ -46,6 +46,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get the version tag
+        id: get_tag
+        run: echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
+        shell: bash
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -74,6 +79,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Get the version tag
+        id: get_tag
+        run: echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
+        shell: bash
 
       - name: Set up Python
         uses: actions/setup-python@v4
