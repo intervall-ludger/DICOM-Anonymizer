@@ -64,7 +64,7 @@ Contributions are welcome! Please make sure to create a new branch for each feat
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the GPL 3.0 License.
 
 ## Feedback
 
